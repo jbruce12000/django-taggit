@@ -275,7 +275,15 @@ class TestTagNormalization(TestCase):
     def test_tag_normalization(self):
         tags = ['ABC','def','gHi']
         ok   = ['abc','def','ghi']
-        self.assertEquals(normalize_tags(tags),ok)
+
+        fxn = None
+        try:
+            fxn = settings.TAGGIT_NORMALIZE_FXN
+        except AttributeError:
+            pass
+        if fxn:
+            self.assertEquals(normalize_tags(tags),ok)
+            
 
 class TestFilterTags(TestCase):
     def test_filtering_of_tags(self):

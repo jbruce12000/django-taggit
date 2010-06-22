@@ -131,17 +131,26 @@ def post_process_tags(tags):
     return tags
 
 def normalize_tags(tags):
-    '''lowercase tags'''
-    return [x.lower() for x in tags]
+    '''normalize tags by a function supplied in settings.py
+       ex. TAGGIT_FILTER_FXN = some.function
+       which must return a list of normalized tags
+    '''
+    fxn = None
+    try:
+        fxn = get_callable(settings.TAGGIT_NORMALIZE_FXN)
+        return fxn(tags)
+    except AttributeError:
+        return tags
 
 def filter_tags(tags):
     '''filter tags by a function supplied in settings.py
        ex. TAGGIT_FILTER_FXN = some.function
+       which must return a list of filtered tags
     '''
-    filter_fxn = None
+    fxn = None
     try:
-        filter_fxn = get_callable(settings.TAGGIT_FILTER_FXN)
-        return filter_fxn(words=tags)
+        fxn = get_callable(settings.TAGGIT_FILTER_FXN)
+        return fxn(tags)
     except AttributeError:
         return tags
 

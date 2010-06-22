@@ -8,7 +8,9 @@ class TestUtils(TestCase):
         '''verify words are properly filtered based on list'''
         words = ['this', 'is', 'a', 'test']
         whats_left = ['test']
-        none_filtered = ['branch', 'twig', 'tree', 'trunk']
+        none_filtered = ['branch', 'tree', 'trunk', 'twig']
         got = filterwords(words)
         self.assertEquals(got, whats_left)
-        self.assertEquals(none_filtered, none_filtered)
+        got = filterwords(none_filtered);
+        got.sort()
+        self.assertEquals(got, none_filtered)
