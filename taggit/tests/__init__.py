@@ -5,6 +5,5 @@ from taggit.tests.tests import (TaggableManagerTestCase,
                                 TestParseTagInput,
                                 TestTagPostProcessing,
                                 TestFilterTags,
-                                TestTagNormalization,
                                 TestTagSynonyms,
                                 TestEditStringForTags)

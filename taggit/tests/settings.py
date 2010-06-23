@@ -8,7 +8,6 @@ INSTALLED_APPS = [
 ]
 
 TAGGIT_FILTER_FXN = 'taggit.tests.settings.filterwords'
-TAGGIT_NORMALIZE_FXN = lambda tags: [x.lower() for x in tags]
 
 def filterwords(words):
     '''filter words'''

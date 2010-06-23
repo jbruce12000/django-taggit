@@ -8,7 +8,7 @@ from taggit.models import Tag
 from taggit.tests.forms import FoodForm, DirectFoodForm
 from taggit.tests.models import Food, Pet, HousePet, DirectFood, DirectPet, DirectHousePet
 
-from taggit.utils import parse_tags as parse_tag_input, edit_string_for_tags, replace_synonyms_with_tags, filter_tags, normalize_tags, post_process_tags
+from taggit.utils import parse_tags as parse_tag_input, edit_string_for_tags, replace_synonyms_with_tags, filter_tags, post_process_tags
 
 from taggit.contrib.synonyms.models import TagSynonym
 
@@ -270,20 +270,6 @@ class TestTagPostProcessing(TestCase):
         tags = ['3','1','1','2']
         ok =   [u'1', u'2', u'3']
         self.assertEquals(post_process_tags(tags),ok)
-
-class TestTagNormalization(TestCase):
-    def test_tag_normalization(self):
-        tags = ['ABC','def','gHi']
-        ok   = ['abc','def','ghi']
-
-        fxn = None
-        try:
-            fxn = settings.TAGGIT_NORMALIZE_FXN
-        except AttributeError:
-            pass
-        if fxn:
-            self.assertEquals(normalize_tags(tags),ok)
-            
 
 class TestFilterTags(TestCase):
     def test_filtering_of_tags(self):

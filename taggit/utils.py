@@ -123,24 +123,11 @@ def edit_string_for_tags(tags):
     return glue.join(names)
 
 def post_process_tags(tags):
-    tags = normalize_tags(tags)
     tags = filter_tags(tags)
     tags = replace_synonyms_with_tags(tags)
     tags = list(set(tags))
     tags.sort()
     return tags
-
-def normalize_tags(tags):
-    '''normalize tags by a function supplied in settings.py
-       ex. TAGGIT_FILTER_FXN = some.function
-       which must return a list of normalized tags
-    '''
-    fxn = None
-    try:
-        fxn = get_callable(settings.TAGGIT_NORMALIZE_FXN)
-        return fxn(tags)
-    except AttributeError:
-        return tags
 
 def filter_tags(tags):
     '''filter tags by a function supplied in settings.py
