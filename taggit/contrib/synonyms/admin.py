@@ -32,7 +32,7 @@ class TagSynonymInline(admin.StackedInline):
 
 class TagSynonymAdmin(admin.ModelAdmin):
     form = TagAdminForm
-    prepopulated_fields = { "slug" : ("name",)}
+#    prepopulated_fields = { "slug" : ("name",)}
     inlines = [
 # FIX - should not go out to github
 #        TaggedItemInline,

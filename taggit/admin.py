@@ -44,7 +44,10 @@ class TagAdminForm(forms.ModelForm):
 
 class TagAdmin(admin.ModelAdmin):
     form = TagAdminForm
-    prepopulated_fields = { "slug" : ("name",)}
+# this was removed because if a tag is added directly through "add tags"
+# urilify.js was removing common words so the same tag could be entered
+# but have two different slugs ex. "president of the usa"
+#    prepopulated_fields = { "slug" : ("name",)}
     inlines = [
 # Fix - this should not got out to github
 # Vince does not wanted Tagged Items in the admin
