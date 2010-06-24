@@ -2,8 +2,7 @@ from taggit.tests.tests import (TaggableManagerTestCase,
                                 TaggableManagerDirectTestCase,
                                 TaggableFormTestCase,
                                 TaggableFormDirectTestCase,
-                                TestParseTagInput,
+                                TagStringParseTestCase,
                                 TestTagPostProcessing,
                                 TestFilterTags,
-                                TestTagSynonyms,
-                                TestEditStringForTags)
+                                TestTagSynonyms,)

@@ -1,13 +1,15 @@
 from unittest import TestCase as UnitTestCase
 
 from django.test import TestCase, TransactionTestCase
+from django.conf import settings
 
 from taggit.models import Tag, TaggedItem
 from taggit.tests.forms import FoodForm, DirectFoodForm, CustomPKFoodForm
 from taggit.tests.models import (Food, Pet, HousePet, DirectFood, DirectPet,
     DirectHousePet, TaggedPet, CustomPKFood, CustomPKPet, CustomPKHousePet,
     TaggedCustomPKPet)
-from taggit.utils import parse_tags, edit_string_for_tags
+from taggit.utils import parse_tags, edit_string_for_tags, post_process_tags, replace_synonyms_with_tags
+from taggit.contrib.synonyms.models import TagSynonym
 
 
 class BaseTaggingTest(object):
@@ -322,8 +324,8 @@ class TagStringParseTestCase(UnitTestCase):
         self.assertEqual(parse_tags('"' * 7), [])
         self.assertEqual(parse_tags(',,,,,,'), [])
         self.assertEqual(parse_tags('",",",",",",","'), [u','])
-        self.assertEqual(parse_tags('a-one "a-two" and "a-three'),
-            [u'a-one', u'a-three', u'a-two', u'and'])
+        self.assertEqual(parse_tags('a-one "a-two" "a-three'),
+            [u'a-one', u'a-three', u'a-two'])
 
     def test_recreation_of_tag_list_string_representations(self):
         plain = Tag.objects.create(name='plain')
