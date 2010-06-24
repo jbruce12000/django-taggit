@@ -45,7 +45,6 @@ class Tag(models.Model):
         else:
             return super(Tag, self).save(*args, **kwargs)
 
-
 class TaggedItemBase(models.Model):
     if django.VERSION < (1, 2):
         tag = models.ForeignKey(Tag, related_name="%(class)s_items")

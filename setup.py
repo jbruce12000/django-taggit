@@ -28,4 +28,3 @@ setup(
     ],
     test_suite='runtests.runtests'
 )
-

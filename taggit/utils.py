@@ -1,5 +1,7 @@
 from django.utils.encoding import force_unicode
 from django.utils.functional import wraps
+from django.conf import settings
+from django.core.urlresolvers import get_callable
 
 
 def parse_tags(tagstring):
@@ -22,9 +24,8 @@ def parse_tags(tagstring):
     # input, we don't *do* a recall... I mean, we know we only need to
     # split on spaces.
     if u',' not in tagstring and u'"' not in tagstring:
-        words = list(set(split_strip(tagstring, u' ')))
-        words.sort()
-        return words
+        words = split_strip(tagstring, u' ')
+        return post_process_tags(words)
 
     words = []
     buffer = []
@@ -71,10 +72,8 @@ def parse_tags(tagstring):
             delimiter = u' '
         for chunk in to_be_split:
             words.extend(split_strip(chunk, delimiter))
-    words = list(set(words))
-    words.sort()
-    return words
-
+    return post_process_tags(words)
+    
 
 def split_strip(string, delimiter=u','):
     """
@@ -124,7 +123,6 @@ def edit_string_for_tags(tags):
         glue = u' '
     return glue.join(sorted(names))
 
-
 def require_instance_manager(func):
     @wraps(func)
     def inner(self, *args, **kwargs):
@@ -132,3 +130,38 @@ def require_instance_manager(func):
             raise TypeError("Can't call %s with a non-instance manager" % func.__name__)
         return func(self, *args, **kwargs)
     return inner
+
+def post_process_tags(tags):
+    tags = filter_tags(tags)
+    tags = replace_synonyms_with_tags(tags)
+    tags = list(set(tags))
+    tags.sort()
+    return tags
+
+def filter_tags(tags):
+    '''filter tags by a function supplied in settings.py
+       ex. TAGGIT_FILTER_FXN = some.function
+       which must return a list of filtered tags
+    '''
+    fxn = None
+    try:
+        fxn = get_callable(settings.TAGGIT_FILTER_FXN)
+        return fxn(tags)
+    except AttributeError:
+        return tags
+
+def replace_synonyms_with_tags(tags):
+    '''replace any synonyms with their parent tags
+    '''
+    if 'taggit.contrib.synonyms' in settings.INSTALLED_APPS:
+        from taggit.contrib.synonyms.models import TagSynonym
+        clean_tags = []
+        for tag in tags:
+            try:
+                # subsitute the parent name
+                synonym = TagSynonym.objects.get(name=tag)
+                clean_tags.append(synonym.tag.name)
+            except TagSynonym.DoesNotExist:
+                clean_tags.append(tag)
+        return clean_tags
+    return tags

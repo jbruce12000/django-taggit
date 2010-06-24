@@ -1,3 +1,4 @@
+from collections import defaultdict
 import django
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -10,7 +11,6 @@ from django.utils.translation import ugettext_lazy as _
 from taggit.forms import TagField
 from taggit.models import Tag, TaggedItem
 from taggit.utils import require_instance_manager
-
 
 try:
     all

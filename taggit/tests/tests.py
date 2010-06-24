@@ -334,3 +334,52 @@ class TagStringParseTestCase(UnitTestCase):
         self.assertEqual(edit_string_for_tags([plain, spaces, comma]), u'"com,ma", plain, spa ces')
         self.assertEqual(edit_string_for_tags([plain, comma]), u'"com,ma" plain')
         self.assertEqual(edit_string_for_tags([comma, spaces]), u'"com,ma", spa ces')
+
+class TestTagPostProcessing(TestCase):
+    def test_post_processing(self):
+        ''' Test tag post-processing
+        just de-duplication and sorting for now
+        '''
+        tags = ['3','1','1','2']
+        ok =   [u'1', u'2', u'3']
+        self.assertEquals(post_process_tags(tags),ok)
+
+class TestFilterTags(TestCase):
+    def test_filtering_of_tags(self):
+        """Test filtering of tags
+        filtering depends on a user supplied fxn via settings, so it could
+        filter anything.  For tests to be reliable, make sure the settings
+        file is exactly what we expect.  if it is not, skip these tests.
+        """
+        filter_fxn = None
+        try:
+            filter_fxn = settings.TAGGIT_FILTER_FXN
+        except AttributeError:
+            pass
+        if filter_fxn and filter_fxn=='taggit.tests.settings.filterwords':
+            tags = filter_tags(['excluded','should','be','filtered'])
+            tags.sort()
+            self.assertEquals(tags, [u'be', u'filtered', u'should'])
+            tags = filter_tags(['nothing','should','be','filtered'])
+            tags.sort()
+            self.assertEquals(tags, [u'be', u'filtered', u'nothing', u'should', ])
+
+class TestTagSynonyms(TestCase):
+    def setUp(self):
+        self.prestxt = u'president barack obama'
+        self.prestag = Tag.objects.create(name = self.prestxt )
+        TagSynonym.objects.create(tag = self.prestag, name = 'president')
+        TagSynonym.objects.create(tag = self.prestag, name = 'barack')
+        TagSynonym.objects.create(tag = self.prestag, name = 'obama')
+    def test_tag_replaces_synonym(self):
+        " tag replaces a synonym "
+        self.assertEquals(replace_synonyms_with_tags(['president']),
+            [self.prestxt])
+        self.assertEquals(replace_synonyms_with_tags(['president','obama']),
+            [self.prestxt,self.prestxt])
+    def test_tag_does_not_replace_non_synonym(self):
+        " tag does not replaces a synonym "
+        self.assertEquals(replace_synonyms_with_tags(['notsynonym']),
+            [u'notsynonym'])
+        self.assertEquals(replace_synonyms_with_tags(
+            ['notsynonym',self.prestxt]),[u'notsynonym',self.prestxt])
