@@ -24,12 +24,6 @@ class Tag(models.Model):
         else:
             return super(Tag, self).save(*args, **kwargs)
 
-    # FIX - this should not go out to github for inclusion
-    class Meta:
-        verbose_name = "topic"
-        verbose_name_plural = "topics"
-
-
 class TaggedItemBase(models.Model):
     if django.VERSION < (1, 2):
         tag = models.ForeignKey(Tag, related_name="%(class)s_items")
@@ -38,7 +32,7 @@ class TaggedItemBase(models.Model):
 
     def __unicode__(self):
         # fix - also should not go to github
-        return "%s has topic %s" % (self.content_object, self.tag)
+        return "%s has tag %s" % (self.content_object, self.tag)
 
     class Meta:
         abstract = True
@@ -87,9 +81,4 @@ class TaggedItem(TaggedItemBase):
         return Tag.objects.filter(**{
             '%s__content_type' % cls.tag_relname(): ct
         }).distinct()
-
-    # FIX - this should not go out to github for inclusion
-    class Meta:
-        verbose_name = "topicalized item"
-        verbose_name_plural = "topicalized items"
 

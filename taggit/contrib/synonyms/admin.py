@@ -1,12 +1,10 @@
 from django import forms
 from django.contrib import admin
-#FIX - should not go out to github
-#from taggit.admin import TaggedItemInline
+from taggit.admin import TaggedItemInline
 from taggit.contrib.synonyms.models import TagSynonym
 from taggit.models import Tag
 
 from taggit.admin import TagAdminForm
-
 
 class TagSynonymForm(forms.ModelForm):
     class Meta:
@@ -25,7 +23,6 @@ class TagSynonymForm(forms.ModelForm):
             pass
         return name
 
-
 class TagSynonymInline(admin.StackedInline):
     model = TagSynonym
     form = TagSynonymForm
@@ -34,9 +31,8 @@ class TagSynonymAdmin(admin.ModelAdmin):
     form = TagAdminForm
 #    prepopulated_fields = { "slug" : ("name",)}
     inlines = [
-# FIX - should not go out to github
-#        TaggedItemInline,
         TagSynonymInline,
+        TaggedItemInline
     ]
 
 admin.site.unregister(Tag)

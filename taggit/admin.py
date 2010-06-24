@@ -27,15 +27,14 @@ class TagAdminForm(forms.ModelForm):
         if filter_fxn:
             words = filter_fxn(words=[name])
             if len(words)==0: #filtered words are not allowed
-                # FIX - wordsmithing...
-                raise forms.ValidationError("this topic is not allowed")
+                raise forms.ValidationError("this tag is not allowed")
 
         # synonyms cannot be topic names
         if 'taggit.contrib.synonyms' in settings.INSTALLED_APPS:
             from taggit.contrib.synonyms.models import TagSynonym
             try:
                 synonym = TagSynonym.objects.get(name=name)
-                raise forms.ValidationError("this topic is not allowed, it is already a synonym of topic = %s" % synonym.tag.name)
+                raise forms.ValidationError("this tag is not allowed, it is already a synonym of tag = %s" % synonym.tag.name)
             except TagSynonym.DoesNotExist:
                 pass 
 
@@ -49,11 +48,8 @@ class TagAdmin(admin.ModelAdmin):
 # but have two different slugs ex. "president of the usa"
 #    prepopulated_fields = { "slug" : ("name",)}
     inlines = [
-# Fix - this should not got out to github
-# Vince does not wanted Tagged Items in the admin
-#        TaggedItemInline
+        TaggedItemInline
     ]
 
 
 admin.site.register(Tag, TagAdmin)
-#admin.site.register(Tag)
