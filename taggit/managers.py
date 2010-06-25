@@ -50,6 +50,8 @@ class TaggableManager(object):
         self.choices = None
         self.serialize = False
         self.null = True
+        self.attname = ""
+        self.flatchoices = None
         self.creation_counter = models.Field.creation_counter
         models.Field.creation_counter += 1
 
@@ -67,6 +69,7 @@ class TaggableManager(object):
         self.model = cls
         cls._meta.add_field(self)
         setattr(cls, name, self)
+        setattr(cls,self.attname,self.name)
 
     def save_form_data(self, instance, value):
         getattr(instance, self.name).set(*value)
